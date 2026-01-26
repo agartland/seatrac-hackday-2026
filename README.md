@@ -1,0 +1,62 @@
+# SEATRAC TB Hackday 2026
+When: Wednesday February 11 2026, 9am – 3pm (EDT and PDT!)
+Where: Hybrid (meeting information will be provided after registration)
+
+Please Register to attend: [https://forms.office.com/r/nMAj1qmwc4]
+  
+Spotlight lecture featuring Drs. Mark Warden and Brian Aldana from Patrick Phillips Lab (UCSF).
+
+Collaborate on TB clinical trial datasets profiling drug treatment responses
+Opportunities for learning, networking and collaboration around TB research!
+Access to Rstudio servers (with registration)
+ 
+We welcome those who are novice or experienced either in coding or in thinking about clinical data. 
+
+
+## Seattle:
+In-person site is at the Jack MacDonald Building (JMB), Soundgarden conference room (room 1112). Here’s the link to the map to JMB: https://maps.app.goo.gl/t6agakP6g1d79ko96.
+
+## UCSF Mission Bay Campus
+Room MH-2105 in Mission Hall (at the UCSF Mission Bay Campus) for those who wish to join others in person.
+
+## Emory University:
+TBD
+
+## Texas Biomed
+Hixon Conference room for those who wish to join others in person.
+Please RSVP to Abby for in-person.
+
+## Virtual:
+
+Zoom ([Zoom link]()). 
+
+Github link: [FredHutch/seatrac-hackday-2026](https://github.com/FredHutch/seatrac-hackday-2026)
+
+## Objectives
+
+Learning, teaching and collaborating! Collaborate in small groups to dive into TB drug treatment trial data. Help clean and prepare analysis datasets for meta-analysis, creating a resource for the field. Conduct preliminary analyses across trials gaining insights into drug side-effects, and the challenges/promise of meta-analysis.
+
+## Code of Conduct
+
+SEATRAC is dedicated to providing a harassment-free learning experience for everyone regardless of gender, gender identity and expression, sexual orientation, disability, physical appearance, body size, race, age or religion. We do not tolerate harassment of participants in any form. Please reference this Code of Conduct adopted by Ocean Hackweek that we will use for our TB Hack Day.
+
+
+
+## Agenda
+
+The event will be starting in-person in the EDT time-zone at 9 AM (EDT). Folks in Seattle and UCSF will start in-person at 9 AM (PDT).
+There will be a JOINT PDT/EDT session at 12 PM PDT / 3 PM EDT to share hack day progress.
+
+| East coast (EDT) | Seattle (PDT) | Activity |
+|-------------|---------------|----------|
+| 9:00 AM     |               | Opening remarks (Shuyi Ma)
+| 9:10        |               | Drs. Mark Warden and Brian Aldana present analysis examples from TB-PACTS dataset|
+| 9:40        |               | Hack day plan with Q&A (Andrew Fiore-Gartland) |
+| 10:00       |               | Break into groups for open hack time |
+|             | 8:30 AM       | Gather with coffee and light breakfast |
+|             | 9:00          | Repeat opening talk for Seattle/UCSF |
+|             | 10:00         | Break into groups for open hack time in Seattle|
+| 3:00 PM     | 12:00 PM      | **JOINT**<br>Small group readouts from Emory/JHU/all: Each group shares processing and analysis findings |
+|             | 3:00          | Small group readouts from Seattle/UCSF |
+
+
