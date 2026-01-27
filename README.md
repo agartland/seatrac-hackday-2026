@@ -60,3 +60,26 @@ There will be a JOINT PDT/EDT session at 12 PM PDT / 3 PM EDT to share hack day 
 |             | 3:00          | Small group readouts from Seattle/UCSF |
 
 
+## R Resources
+
+The material covered in our Introduction to R workshops can be found at the following links:
+
+1. **Jan 15**: R/Rstudio basics, importing and subsetting data, intro to libraries. [tutorial link](https://ma-lab-seattle-childrens-cgidr.github.io/SEATRAC_Rintro/Session1_Rbasics.html). [video link](https://youtu.be/e_emSu9dX1o).
+2. **Feb 5**: Data manipulation with tidyverse, basic plotting. [tutorial link](https://ma-lab-seattle-childrens-cgidr.github.io/SEATRAC_Rintro/Session2_tidyR_Plotting.v1.html). [link to code cheatsheet](https://ma-lab-seattle-childrens-cgidr.github.io/SEATRAC_Rintro/Session2_cheatsheet2.html).
+
+
+### Additional R resources
+
+#### General R
+
+* [R cheatsheets](https://www.rstudio.com/resources/cheatsheets/) also available in RStudio under Help > Cheatsheets
+* [BIGslu R workshops](https://bigslu.github.io/workshops/) for Dr. Kim Dill-McFarland's introductory workshops on bioinformatics workflows in R, RNAseq analysis
+* [The Carpentries](https://carpentries.org/workshops/#workshop-curriculum) for more workshops on R, python, command line, git, etc.! Introductory through intermediate content.
+* [EDUCE](https://educe-ubc.github.io/workshops/) for R workshops using microbial ecology data. Intro R, tidyverse, reproducible research, and statistics.
+* [TidyTuesday](https://github.com/rfordatascience/tidytuesday) A weekly plotting challenge
+* [R code club](https://www.riffomonas.org/code_club/) Dr. Pat Schloss opened his lab's coding club to remote participation.
+
+#### Seattle R groups
+
+* [Rladies Seattle](https://www.meetup.com/rladies-seattle/) Not just for ladies! A pro-actively inclusive R community with both in-person and online workshops, hangouts, etc.
+* [Seattle useR Group](https://www.meetup.com/Seattle-useR/)
