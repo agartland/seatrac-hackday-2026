@@ -62,7 +62,7 @@ There will be a JOINT PDT/EDT session at 12 PM PDT / 3 PM EDT to share hack day 
 
 ## R Resources
 
-The material covered in our Introduction to R workshops can be found at the following links:
+The material covered in our [Introduction to R workshops](https://ma-lab-seattle-childrens-cgidr.github.io/SEATRAC_Rintro/index.html) can be found at the following links:
 
 1. **Jan 15**: R/Rstudio basics, importing and subsetting data, intro to libraries. [tutorial link](https://ma-lab-seattle-childrens-cgidr.github.io/SEATRAC_Rintro/Session1_Rbasics.html). [video link](https://youtu.be/e_emSu9dX1o).
 2. **Feb 5**: Data manipulation with tidyverse, basic plotting. [tutorial link](https://ma-lab-seattle-childrens-cgidr.github.io/SEATRAC_Rintro/Session2_tidyR_Plotting.v1.html). [link to code cheatsheet](https://ma-lab-seattle-childrens-cgidr.github.io/SEATRAC_Rintro/Session2_cheatsheet2.html).
