@@ -50,7 +50,7 @@ SEATRAC is dedicated to providing a harassment-free learning experience for ever
 The event will be starting in-person in the EDT time-zone at 9 AM (EDT). Folks in Seattle and UCSF will start in-person at 9 AM (PDT).
 There will be a JOINT PDT/EDT session at 12 PM PDT / 3 PM EDT to share hack day progress.
 
-| East coast (EDT) | Seattle (PDT) | Activity |
+| East Coast (EDT) | West Coast (PDT) | Activity |
 |-------------|---------------|----------|
 | 9:00 AM     |               | Opening remarks (Shuyi Ma)
 | 9:10        |               | Mark Warden and Brian Aldana present analysis examples from TB-PACTS dataset|
