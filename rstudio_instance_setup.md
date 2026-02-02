@@ -38,19 +38,35 @@ Login to the container and down load the latest code repos, create system users 
 
 The Rstudio server is reachable via HTTP (not HTTPS) using http://[IPv4 address]:8787
 
+This new script checks out the repos and copies the tools repo to the home folders for everyone:
 ```
 cd /home
-git clone https://github.com/FredHutch/seatrac-hackday-2026.git
+git clone https://github.com/agartland/seatrac-hackday-2026.git
+cd seatrac-hackday-2026
+sudo chmod +x ./setup_student_repos.sh
+sudo ./setup_student_repos.sh
+
+mkdir /home/data
+wget -O /home/TB-PACTS/tbpacts.zip "https://www.dropbox.com/[LINK]&dl=1"
+cd /home/TB-PACTS
+unzip tbpacts.zip
+```
+
+### ARCHIVED 
+```
+cd /home
+git clone https://github.com/agartland/seatrac-hackday-2026.git
 git clone https://github.com/agartland/hackday-rstudio.git
+git clone https://github.com/FredHutch/tb_pacts_tools.git
 
 python3 hackday-rstudio/create_users.py seatrac-hackday-2026/roster.users.csv
 cat /etc/passwd
 cp /etc/pam.d/login /etc/pam.d/rstudio
 
-mkdir /home/processed_data
-wget https://figshare.com/ndownloader/articles/27774420/versions/2 -O /home/processed_data/processed_data.zip
-cd /home/processed_data
-unzip processed_data.zip
+mkdir /home/data
+wget -O data/tbpacts.zip "https://www.dropbox.com/[LINK TO FOLDER]&dl=1"
+cd /home/data
+unzip tbpacts.zip
 ```
 
 To add users to the Rstudio app:
@@ -76,7 +92,7 @@ Use a launch template for quickly launching a new instance. The template `RStudi
  - User data: This script is run when instance starts
  
  ```bash
- #! /bin/sh
+#! /bin/sh
 sudo yum update -y
 sudo yum -y install docker
 sudo service docker start
@@ -94,7 +110,7 @@ sudo docker pull afioregartland/hackday-rstudio
  - `docker push afioregartland/hackday-rstudio:latest`
  - `sudo swapoff -a` to turn off the swap and `sudo rm /swap` to remove it
  - `df -h` and `sudo du -shx /* 2>/dev/null | sort -h` and `du -h`
- - To expand the disk, you can Modify te EBS volume, then `sudo growpart /dev/nvme0n1 1` to grow a partition and `sudo xfs_growfs /` to grow the filesystem
+ - To expand the disk, you can Modify te EBS volume, then `sudo growpart /dev/nvme0n1 1` or `sudo growpart /dev/xvda 1` to grow a partition and `sudo xfs_growfs /` to grow the filesystem
 
 ## Unit test for `lme4` installation
 
