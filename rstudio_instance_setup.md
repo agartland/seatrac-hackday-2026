@@ -28,6 +28,7 @@ Pull the latest container from dockerhub.com and launch. Port is specified as `-
 
 ```
 sudo docker pull afioregartland/hackday-rstudio
+sudo docker rm -f hackday_rstudio # if you need to remove the old container
 sudo docker run -d -p 8787:8787 -e PASSWORD=dude97 --name hackday_rstudio afioregartland/hackday-rstudio:latest
 sudo docker exec -it hackday_rstudio /bin/bash
 ```
@@ -43,8 +44,8 @@ This new script checks out the repos and copies the tools repo to the home folde
 cd /home
 git clone https://github.com/agartland/seatrac-hackday-2026.git
 cd seatrac-hackday-2026
-sudo chmod +x ./setup_student_repos.sh
-sudo ./setup_student_repos.sh
+sudo chmod +x ./setup_home_folders.sh
+sudo ./setup_home_folders.sh
 
 mkdir /home/data
 wget -O /home/TB-PACTS/tbpacts.zip "https://www.dropbox.com/[LINK]&dl=1"
@@ -104,6 +105,7 @@ sudo docker pull afioregartland/hackday-rstudio
 ## Other useful `docker` bits
  - `docker build --tag afioregartland/hackday-rstudio:latest https://github.com/agartland/hackday-rstudio.git`
  - `docker images`
+ - `docker container list`
  - `docker tag [IMAGE_ID] afioregartland/hackday-rstudio:latest`
  - `docker run -d -p 8787:8787 -e PASSWORD=dude97 --name hackday_rstudio afioregartland/hackday-rstudio:latest`
  - `docker exec -it hackday_rstudio /bin/bash`
