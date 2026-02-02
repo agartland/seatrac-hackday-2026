@@ -47,10 +47,12 @@ cd seatrac-hackday-2026
 sudo chmod +x ./setup_home_folders.sh
 sudo ./setup_home_folders.sh
 
-mkdir /home/data
+mkdir /home/TB-PACTS
 wget -O /home/TB-PACTS/tbpacts.zip "https://www.dropbox.com/[LINK]&dl=1"
 cd /home/TB-PACTS
 unzip tbpacts.zip
+chown root:root "/home/TB-PACTS"
+chmod 755 "/home/TB-PACTS"
 ```
 
 ### ARCHIVED 

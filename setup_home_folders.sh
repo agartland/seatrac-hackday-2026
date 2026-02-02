@@ -93,7 +93,7 @@ success_count=0
 fail_count=0
 
 # Read usernames from the roster CSV (assuming username is in first column, skip header)
-tail -n +2 "${ROSTER_FILE}" | while IFS=, read -r username rest; do
+tail -n +2 "${ROSTER_FILE}" | while IFS=, read -r index username rest; do
     # Remove any whitespace, quotes, and carriage returns
     username=$(echo "${username}" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//;s/"//g' | tr -d '\r\n')
     
