@@ -1,0 +1,302 @@
+---
+title: "Analysis Dataset Progress Report"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    embed-resources: true
+    theme: cosmo
+    code-fold: true
+params:
+  adata_folder: "~/adata"
+execute:
+  echo: false
+  warning: false
+---
+
+```{python}
+#| label: setup
+#| include: false
+
+import os
+import re
+import glob
+import pandas as pd
+import plotly.graph_objects as go
+from pathlib import Path
+from IPython.display import Markdown, display
+
+# USAGE: quarto render adata_progress.qmd -P adata_folder:~/fg_data/SEATRAC/TB_hackday_2026/test_adata
+# adata_folder = os.path.expanduser(params["adata_folder"])
+adata_folder = os.path.expanduser('~/fg_data/SEATRAC/TB_hackday_2026/test_adata')
+```
+
+```{python}
+#| label: scan-files
+
+# ---------- helpers ----------
+def is_dictionary_file(filename):
+    """Return True if filename indicates a data dictionary (not a data file)."""
+    fn_lower = filename.lower()
+    return "dict" in fn_lower or "dictionary" in fn_lower
+
+
+def detect_ptid_column(df):
+    """Heuristic to find the participant-ID column.
+
+    Tries exact and partial matches in order of likelihood.
+    Returns the column name or None.
+    """
+    candidates = ["ptid", "PTID", "subjid", "SUBJID", "subject_id", "SUBJECT_ID",
+                   "participant_id", "PARTICIPANT_ID", "usubjid", "USUBJID",
+                   "patid", "PATID", "patient_id", "PATIENT_ID", "pub_id", "PUB_ID"]
+    cols_lower = {c.lower(): c for c in df.columns}
+    for cand in candidates:
+        if cand.lower() in cols_lower:
+            return cols_lower[cand.lower()]
+    # Fallback: first column whose name contains "ptid", "subj", or "participant"
+    for c in df.columns:
+        if re.search(r"(ptid|subj|participant|patient)", c, re.IGNORECASE):
+            return c
+    return None
+
+
+def parse_csv_filename(filename):
+    """Extract trial ID and the descriptive text suffix from a CSV filename.
+
+    Expected patterns:
+        ae_adata_TB-1037_2026-02_yes.csv  -> trial='TB-1037', txt='2026-02_yes'
+        eff_adata_TB-1037_2026-02_fast.csv -> trial='TB-1037', txt='2026-02_fast'
+
+    The trial ID is 'TB-' followed by digits.  Everything after the trial ID
+    (up to .csv) is considered the descriptive text.
+    """
+    stem = Path(filename).stem  # strip .csv
+    # Remove the leading ae_adata_ or eff_adata_ prefix
+    stem_no_prefix = re.sub(r"^(ae|eff)_adata_", "", stem)
+    m = re.match(r"(TB-\d+)(.*)", stem_no_prefix)
+    if m:
+        trial = m.group(1)
+        txt = m.group(2).lstrip("_")  # strip leading underscore
+        return trial, txt
+    return None, stem_no_prefix
+
+
+# ---------- scan subfolders ----------
+trial_pattern = re.compile(r"^TB-\d+")
+
+ae_records = []
+eff_records = []
+notes_by_trial = {}  # key = "TB-XXXX (folder_suffix)" -> list of note file contents
+
+for entry in sorted(os.listdir(adata_folder)):
+    subfolder = os.path.join(adata_folder, entry)
+    if not os.path.isdir(subfolder):
+        continue
+    if not trial_pattern.match(entry):
+        continue
+
+    # Derive trial ID and folder suffix from folder name
+    m_folder = re.match(r"(TB-\d+)(.*)", entry)
+    folder_trial = m_folder.group(1)
+    folder_suffix = m_folder.group(2).lstrip("_")
+
+    for fname in sorted(os.listdir(subfolder)):
+        fpath = os.path.join(subfolder, fname)
+        if not os.path.isfile(fpath):
+            continue
+
+        # ---- CSV data files ----
+        if fname.lower().endswith(".csv") and not is_dictionary_file(fname):
+            is_ae = fname.lower().startswith("ae_adata")
+            is_eff = fname.lower().startswith("eff_adata")
+            if not (is_ae or is_eff):
+                continue
+
+            trial_id, txt = parse_csv_filename(fname)
+            if trial_id is None:
+                trial_id = folder_trial
+
+            try:
+                df = pd.read_csv(fpath)
+            except Exception as e:
+                record = dict(
+                    trial=trial_id, txt=txt, filename=fname,
+                    folder=entry, n_participants="ERROR", n_rows="ERROR",
+                    ptid_col="ERROR", error=str(e)
+                )
+                (ae_records if is_ae else eff_records).append(record)
+                continue
+
+            ptid_col = detect_ptid_column(df)
+            n_participants = int(df[ptid_col].nunique()) if ptid_col else None
+            record = dict(
+                trial=trial_id,
+                txt=txt,
+                filename=fname,
+                folder=entry,
+                n_participants=n_participants,
+                n_rows=len(df),
+                ptid_col=ptid_col,
+                error=None
+            )
+            (ae_records if is_ae else eff_records).append(record)
+
+        # ---- Notes markdown files ----
+        if re.match(r"notes.*\.md$", fname, re.IGNORECASE):
+            trial_key = f"{folder_trial} ({folder_suffix})" if folder_suffix else folder_trial
+            if trial_key not in notes_by_trial:
+                notes_by_trial[trial_key] = []
+            with open(fpath, "r") as f:
+                notes_by_trial[trial_key].append((fname, f.read()))
+
+ae_df = pd.DataFrame(ae_records)
+eff_df = pd.DataFrame(eff_records)
+```
+
+## Summary Figure
+
+Horizontal bar chart showing the number of unique participants with analyzable data
+per dataset, grouped by trial and colored by data type (AE vs Efficacy).
+
+```{python}
+#| label: fig-summary
+#| fig-cap: "Participants with analyzable data by trial and dataset type"
+
+# Build a combined dataframe for plotting
+plot_rows = []
+for _, row in ae_df.iterrows():
+    label = f"{row['trial']}  ({row['txt']})" if row["txt"] else row["trial"]
+    plot_rows.append(dict(label=label, type="AE", n=row["n_participants"] or 0))
+for _, row in eff_df.iterrows():
+    label = f"{row['trial']}  ({row['txt']})" if row["txt"] else row["trial"]
+    plot_rows.append(dict(label=label, type="Efficacy", n=row["n_participants"] or 0))
+
+plot_df = pd.DataFrame(plot_rows)
+
+if len(plot_df) > 0:
+    # Sort by trial label so bars are grouped sensibly
+    labels_order = sorted(plot_df["label"].unique())
+
+    ae_plot = plot_df[plot_df["type"] == "AE"].set_index("label").reindex(labels_order)
+    eff_plot = plot_df[plot_df["type"] == "Efficacy"].set_index("label").reindex(labels_order)
+
+    fig = go.Figure()
+    fig.add_trace(go.Bar(
+        y=ae_plot.index,
+        x=ae_plot["n"],
+        name="AE",
+        orientation="h",
+        marker_color="#4C78A8",
+        text=ae_plot["n"],
+        textposition="auto"
+    ))
+    fig.add_trace(go.Bar(
+        y=eff_plot.index,
+        x=eff_plot["n"],
+        name="Efficacy",
+        orientation="h",
+        marker_color="#F58518",
+        text=eff_plot["n"],
+        textposition="auto"
+    ))
+    fig.update_layout(
+        barmode="group",
+        title="Participants per Dataset",
+        xaxis_title="Number of Unique Participants",
+        yaxis_title="",
+        height=max(350, len(labels_order) * 60 + 120),
+        margin=dict(l=200),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+    fig.show()
+else:
+    display(Markdown("*No AE or Efficacy datasets found.*"))
+```
+
+## AE Datasets
+
+```{python}
+#| label: tbl-ae
+#| tbl-cap: "Adverse Event analysis datasets"
+
+if len(ae_df) > 0:
+    display_ae = ae_df[["trial", "txt", "filename", "n_participants", "n_rows", "ptid_col"]].copy()
+    display_ae.columns = ["Trial", "Suffix", "Filename", "N Participants", "N Rows", "PTID Column"]
+    display(Markdown(display_ae.to_markdown(index=False)))
+else:
+    display(Markdown("*No AE datasets found.*"))
+```
+
+## Efficacy Datasets
+
+```{python}
+#| label: tbl-eff
+#| tbl-cap: "Efficacy analysis datasets"
+
+if len(eff_df) > 0:
+    display_eff = eff_df[["trial", "txt", "filename", "n_participants", "n_rows", "ptid_col"]].copy()
+    display_eff.columns = ["Trial", "Suffix", "Filename", "N Participants", "N Rows", "PTID Column"]
+    display(Markdown(display_eff.to_markdown(index=False)))
+else:
+    display(Markdown("*No Efficacy datasets found.*"))
+```
+
+## Trial Notes
+
+Aggregated notes from `notes*.md` files found in each trial subfolder,
+organized by **Status**, **TODO**, and **Issues** sections.
+
+```{python}
+#| label: notes
+#| output: asis
+
+def extract_sections(text):
+    """Extract Status, TODO, and Issues sections from markdown text.
+
+    Returns a dict with keys 'status', 'todo', 'issues', each containing
+    the text content under that heading (or empty string if not found).
+    """
+    sections = {"status": "", "todo": "", "issues": ""}
+    # Split on top-level headings (# ...)
+    # We use a regex that captures the heading name
+    parts = re.split(r"(?m)^#\s+", text)
+    for part in parts:
+        if not part.strip():
+            continue
+        # First line is the heading text, rest is body
+        lines = part.split("\n", 1)
+        heading = lines[0].strip().lower()
+        body = lines[1].strip() if len(lines) > 1 else ""
+        if heading == "status":
+            sections["status"] = body
+        elif heading == "todo":
+            sections["todo"] = body
+        elif heading == "issues":
+            sections["issues"] = body
+    return sections
+
+
+md_output = []
+
+for trial_key in sorted(notes_by_trial.keys()):
+    note_files = notes_by_trial[trial_key]
+    # Aggregate sections across all note files for this trial
+    agg = {"status": [], "todo": [], "issues": []}
+    for note_fname, note_text in sorted(note_files, key=lambda x: x[0]):
+        sections = extract_sections(note_text)
+        for key in agg:
+            if sections[key]:
+                agg[key].append(f"\n{sections[key]} (*{note_fname}*)")
+
+    md_output.append(f"# {trial_key}\n")
+    md_output.append("## Status\n")
+    md_output.append("\n\n".join(agg["status"]) if agg["status"] else "*No status notes.*")
+    md_output.append("\n\n## TODO\n")
+    md_output.append("\n\n".join(agg["todo"]) if agg["todo"] else "*No TODO notes.*")
+    md_output.append("\n\n## Issues\n")
+    md_output.append("\n\n".join(agg["issues"]) if agg["issues"] else "*No issues noted.*")
+    md_output.append("\n\n")
+
+print("\n".join(md_output))
+```
