@@ -53,6 +53,7 @@ cd /home/TB-PACTS
 unzip tbpacts.zip
 chown root:root "/home/TB-PACTS"
 chmod 755 "/home/TB-PACTS"
+chmod -R a+rX /home/TB-PACTS
 ```
 
 ### ARCHIVED 
